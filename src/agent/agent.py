@@ -8,7 +8,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics.pairwise import cosine_similarity
 
-from agent.decision import make_decision
+try:
+    from agent.decision import make_decision
+except ModuleNotFoundError:
+    from decision import make_decision
 
 from google import genai
 
@@ -141,11 +144,14 @@ def run_agent(message):
     else:
         best_score = float(cases.iloc[0]["score"])
 
-    decision, reason = make_decision(
+    decision_result = make_decision(
         intent,
         message,
         best_score
     )
+
+    decision = decision_result["decision"]
+    reason = decision_result["reason"]
 
     reply = None
 
