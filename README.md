@@ -271,6 +271,30 @@ Two evaluation paths are implemented:
 
 The repository contains the evaluation scripts and rubric, but final judge-human agreement should only be reported after both evaluations have been run on the generated response set.
 
+### Response evaluation results
+
+The LLM judge produced the following average scores on the 20-example response evaluation set:
+
+| Dimension | Average |
+|---|---:|
+| Groundedness | 5.00 / 5 |
+| Helpfulness | 4.95 / 5 |
+| Intent correctness | 5.00 / 5 |
+| No unsupported claims | 5.00 / 5 |
+| Overall quality | 4.95 / 5 |
+
+The overall LLM-judge average across the five dimensions is 4.98 / 5.
+
+Human evaluation on the same 20 responses showed:
+
+- Exact overall-score agreement: 75%
+- Mean absolute score difference: 0.40
+- Cohen's kappa: 0.231
+- Linear weighted kappa: 0.149
+- Pearson correlation: 0.157
+
+The relatively low agreement shows that the LLM judge can be optimistic on some weak responses. Therefore, the judge score is treated as a diagnostic metric rather than a definitive benchmark.
+
 ## Auto-handle vs human escalation
 
 The decision layer combines:
@@ -593,5 +617,6 @@ The current prototype has several limitations:
 * Response-generation evaluation still requires both human and LLM judging before judge-human agreement can be reported.
 * The historical dataset reflects Twitter support behavior and may not represent current Amazon support policies.
 * The system does not execute real customer-support actions.
+- The response-quality evaluation uses only 20 examples, and the LLM judge showed limited agreement with human ratings.
 
 The goal of this project is therefore to demonstrate a reproducible support-agent architecture and honest evaluation process rather than claim production readiness.
