@@ -620,6 +620,8 @@ The current prototype has several limitations:
 * The system does not execute real customer-support actions.
 - The response-quality evaluation uses only 20 examples, and the LLM judge showed limited agreement with human ratings.
 
+- SHUBHAM 
+
 The goal of this project is therefore to demonstrate a reproducible support-agent architecture and honest evaluation process rather than claim production readiness.
 
 
