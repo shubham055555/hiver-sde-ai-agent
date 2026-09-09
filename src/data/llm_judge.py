@@ -83,11 +83,13 @@ Return only valid JSON with this structure:
 
             return json.loads(text)
 
-        except Exception:
+        except Exception as error:
             if attempt == 2:
                 raise
 
-            time.sleep(5)
+            print(f"Judge request failed: {error}")
+            print("Waiting before retry...")
+            time.sleep(20 * (attempt + 1))
 
 
 if not INPUT_PATH.exists():
@@ -100,7 +102,20 @@ df = pd.read_csv(INPUT_PATH)
 
 results = []
 
+if OUTPUT_PATH.exists():
+    existing_df = pd.read_csv(OUTPUT_PATH)
+    results = existing_df.to_dict("records")
+    completed_ids = set(existing_df["tweet_id"].astype(str))
+else:
+    completed_ids = set()
+
+
 for _, row in df.iterrows():
+    tweet_id = str(row["tweet_id"])
+
+    if tweet_id in completed_ids:
+        continue
+
     scores = judge_response(row)
 
     results.append(
@@ -120,17 +135,13 @@ for _, row in df.iterrows():
         }
     )
 
-results_df = pd.DataFrame(results)
+    pd.DataFrame(results).to_csv(
+        OUTPUT_PATH,
+        index=False
+    )
 
-OUTPUT_PATH.parent.mkdir(
-    parents=True,
-    exist_ok=True
-)
+    print(f"Completed: {len(results)}/{len(df)}")
 
-results_df.to_csv(
-    OUTPUT_PATH,
-    index=False
-)
 
-print(f"Judged examples: {len(results_df)}")
+print(f"Judged examples: {len(results)}")
 print(f"Saved to: {OUTPUT_PATH}")

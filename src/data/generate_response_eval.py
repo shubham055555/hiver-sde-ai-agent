@@ -12,16 +12,29 @@ df = pd.read_csv(INPUT_PATH)
 
 results = []
 
+if OUTPUT_PATH.exists():
+    existing_df = pd.read_csv(OUTPUT_PATH)
+    results = existing_df.to_dict("records")
+    completed_ids = set(existing_df["tweet_id"].astype(str))
+else:
+    completed_ids = set()
+
+
 for _, row in df.iterrows():
+    tweet_id = str(row["tweet_id"])
+
+    if tweet_id in completed_ids:
+        continue
+
     message = row["text"]
 
     intent = predict_intent(message)
     cases = retrieve_cases(message, top_k=3)
 
-    if not cases.empty:
-        retrieval_score = cases.iloc[0]["score"]
-    else:
+    if cases.empty:
         retrieval_score = 0.0
+    else:
+        retrieval_score = float(cases.iloc[0]["score"])
 
     reply = generate_reply(message, intent, cases)
 
@@ -36,18 +49,13 @@ for _, row in df.iterrows():
         }
     )
 
+    pd.DataFrame(results).to_csv(
+        OUTPUT_PATH,
+        index=False
+    )
 
-results_df = pd.DataFrame(results)
+    print(f"Completed: {len(results)}/{len(df)}")
 
-OUTPUT_PATH.parent.mkdir(
-    parents=True,
-    exist_ok=True
-)
 
-results_df.to_csv(
-    OUTPUT_PATH,
-    index=False
-)
-
-print(f"Evaluated examples: {len(results_df)}")
+print(f"Evaluated examples: {len(results)}")
 print(f"Saved to: {OUTPUT_PATH}")
