@@ -112,7 +112,7 @@ The labels describe the customer's intent rather than simply the product categor
 
 A manually labelled golden set of 200 customer messages was created.
 
-The examples were sampled from the AmazonHelp customer-message corpus and labelled according to the intent taxonomy above.
+The 200 examples were sampled from the AmazonHelp customer-message corpus and manually labelled using the 11-intent taxonomy above. The sample was kept intentionally imbalanced rather than forcing equal counts, so the evaluation reflects the observed customer-message distribution while still covering every intent. Ambiguous or context-poor messages were assigned based on the customer message and the primary support intent expressed in it.
 
 The set contains all 11 intents, although the distribution is intentionally not uniform because it reflects the sampled customer-message distribution.
 
@@ -269,7 +269,7 @@ Two evaluation paths are implemented:
 * Human evaluation
 * LLM-as-judge evaluation using Gemini 3.6 Flash
 
-The repository contains the evaluation scripts and rubric, but final judge-human agreement should only be reported after both evaluations have been run on the generated response set.
+The repository contains the evaluation scripts, rubric, generated response evaluation set, and completed manual evaluation file. Judge-human agreement is reported below as evidence about the reliability of the automated judge.
 
 ### Response evaluation results
 
@@ -523,7 +523,8 @@ hiver-sde-ai-agent/
 |-- data/
 |   |-- golden/
 |   |   |-- golden_set.csv
-|   |   `-- response_eval_set.csv
+|   |   |-- response_eval_set.csv
+|   |   `-- response_human_eval.csv
 |   |
 |   |-- raw/
 |   |   `-- twcs/
@@ -614,9 +615,13 @@ The current prototype has several limitations:
 * Retrieval uses lexical similarity rather than semantic embeddings.
 * The decision layer is rule-based.
 * Multilingual messages are not handled robustly.
-* Response-generation evaluation still requires both human and LLM judging before judge-human agreement can be reported.
+* Response-generation evaluation uses a small 20-example set, and the LLM judge showed limited agreement with the manual ratings.
 * The historical dataset reflects Twitter support behavior and may not represent current Amazon support policies.
 * The system does not execute real customer-support actions.
 - The response-quality evaluation uses only 20 examples, and the LLM judge showed limited agreement with human ratings.
 
 The goal of this project is therefore to demonstrate a reproducible support-agent architecture and honest evaluation process rather than claim production readiness.
+
+
+
+
